@@ -6,7 +6,7 @@
 development:
   adapter: postgresql
   encoding: unicode
-  database: dayitinerary_development
+  database: tutorial_development
   template: template0
   pool: 5
   timeout: 5000
@@ -19,7 +19,7 @@ development:
 test:
   adapter: postgresql
   encoding: unicode
-  database: dayitinerary_test
+  database: tutorial_test
   template: template0
   pool: 5
   timeout: 5000
