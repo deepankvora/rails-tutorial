@@ -16,6 +16,52 @@ describe "Static pages" do
 
     it_should_behave_like "all static pages"
     it { should_not have_title('| Home') }
+
+    describe "for signed-in users" do
+      let(:user) { FactoryGirl.create(:user) }
+      before do
+        FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+        sign_in user
+        visit root_path
+      end
+
+      describe "with one post" do
+        it "should have singular microposts count" do
+          should have_selector('span', text: '1 micropost')
+          should_not have_selector('span', text: 'microposts')
+        end
+      end
+
+      describe "with more than one post" do
+        before do
+          FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
+          visit root_path
+        end
+        it "should render the user's feed" do
+          user.feed.each do |item|
+            expect(page).to have_selector("li##{item.id}", text: item.content)
+          end
+        end
+
+        it "should have plural microposts count" do
+          should have_selector('span', text: '2 microposts')
+        end
+
+        # # Gives deprecation warning for using 'user' let variable in before(:all)
+        # describe "pagination" do
+        #   before(:all) { 30.times { FactoryGirl.create(:micropost, user: user) } }
+        #   after(:all)  { Micropost.delete_all }
+
+        #   it { should have_selector('div.pagination') }
+
+        #   it "should list each user" do
+        #     user.feed.paginate(page: 1).each do |feed_item|
+        #       expect(page).to have_selector('li', text: feed_item.content)
+        #     end
+        #   end
+        # end
+      end
+    end
   end
 
   describe "Help page" do
